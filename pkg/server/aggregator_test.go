@@ -147,7 +147,7 @@ func Test_mergeConfiguration_tlsCertificates(t *testing.T) {
 		{
 			desc: "Allows tlsalpn provider to give certificates",
 			given: dynamic.Configurations{
-				"tlsalpn.acme": &dynamic.Configuration{
+				"tlsalpn.acme.challenge": &dynamic.Configuration{
 					TLS: &dynamic.TLSConfiguration{
 						Certificates: []*tls.CertAndStores{{
 							CertFile: "foo",
@@ -162,6 +162,21 @@ func Test_mergeConfiguration_tlsCertificates(t *testing.T) {
 				KeyFile:  "bar",
 				Stores:   []string{tlsalpn01.ACMETLS1Protocol},
 			}},
+		},
+		{
+			desc: "Skips a resolver provider that collides with the old TLS-ALPN name",
+			given: dynamic.Configurations{
+				"tlsalpn.acme": &dynamic.Configuration{
+					TLS: &dynamic.TLSConfiguration{
+						Certificates: []*tls.CertAndStores{{
+							CertFile: "foo",
+							KeyFile:  "bar",
+							Stores:   []string{tlsalpn01.ACMETLS1Protocol},
+						}},
+					},
+				},
+			},
+			expected: nil,
 		},
 	}
 
